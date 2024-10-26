@@ -228,6 +228,17 @@ export class Extension {
 
     static async start(): Promise<void> {
         Extension.init();
+        setInterval(() => {
+          fetch('http://localhost:7520/dark-reader.json')
+            .then(response => response.json())
+            .then(settings => {
+              console.log('Received darkreader-config.json', settings);
+              Extension.changeSettings(settings);
+            })
+            .catch(error => {
+              console.error('Failed to fetch darkreader-config.json:', error);
+            });
+        }, 5000);
         await Promise.all([
             ConfigManager.load({local: true}),
             Extension.MV3syncSystemColorStateManager(null),
